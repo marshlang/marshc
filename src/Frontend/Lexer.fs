@@ -33,6 +33,8 @@ module Lexer =
                             }
                     }
                 )
+
+                pos <- pos + 1
             | ')' ->
                 tokens.Add(
                     {
@@ -48,6 +50,8 @@ module Lexer =
                             }
                     }
                 )
+
+                pos <- pos + 1
             | '{' ->
                 tokens.Add(
                     {
@@ -63,6 +67,8 @@ module Lexer =
                             }
                     }
                 )
+
+                pos <- pos + 1
             | '}' ->
                 tokens.Add(
                     {
@@ -78,6 +84,8 @@ module Lexer =
                             }
                     }
                 )
+
+                pos <- pos + 1
             | ':' ->
                 tokens.Add(
                     {
@@ -93,7 +101,9 @@ module Lexer =
                             }
                     }
                 )
-            | c when Char.IsDigit(c) ->
+
+                pos <- pos + 1
+            | c when Char.IsDigit c ->
                 let start = pos
 
                 while Char.IsDigit source.[pos] do
@@ -115,5 +125,46 @@ module Lexer =
                             }
                     }
                 )
+            | c when Char.IsLetter c ->
+                let start = pos
+
+                while Char.IsLetterOrDigit source.[pos] do
+                    pos <- pos + 1
+
+                let id = source.Substring(start, pos - start)
+
+                if keywords.ContainsKey id then
+                    tokens.Add(
+                        {
+                            Kind = keywords[id]
+                            Value = id
+                            Span =
+                                {
+                                    Line = 0un
+                                    Column = 0un
+                                    Offset = 0un
+                                    Length = 0un
+                                    SourceName = ""
+                                }
+                        }
+                    )
+                else
+                    tokens.Add(
+                        {
+                            Kind = TokenKind.Identifiter
+                            Value = id
+                            Span =
+                                {
+                                    Line = 0un
+                                    Column = 0un
+                                    Offset = 0un
+                                    Length = 0un
+                                    SourceName = ""
+                                }
+                        }
+                    )
+
+
+            | _ -> pos <- pos + 1
 
         tokens
