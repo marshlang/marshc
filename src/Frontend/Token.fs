@@ -4,6 +4,8 @@ type TokenKind =
     | Identifiter
     //keywords
     | KFun
+    | KLet
+    | KMut
     //symbols
     | LParen
     | RParen

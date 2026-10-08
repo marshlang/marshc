@@ -4,11 +4,40 @@ open System
 open System.Collections.Generic
 
 module Lexer =
-    let Tokenize (source: string) : Token List =
+    let Tokenize (sourceName: string) (source: string) : Token List =
         //imperative Lexer will be prob better
         let tokens = ResizeArray<Token>()
-        let keywords = dict["fun", TokenKind.KFun]
+
+        let keywords =
+            dict["fun", TokenKind.KFun
+                 "let", TokenKind.KLet
+                 "mut", TokenKind.KMut]
+
         let mutable pos = 0
+        // lineStart is the offset of the first char in the current line ;)
+        let mutable line = 1
+        let mutable lineStart = 0
+
+        let addToken kind (start: int) =
+            tokens.Add(
+                {
+                    Kind = kind
+                    Value = source.Substring(start, pos - start)
+                    Span =
+                        {
+                            Line = unativeint line
+                            Column = unativeint (start - lineStart + 1)
+                            Offset = unativeint start
+                            Length = unativeint (pos - start)
+                            SourceName = sourceName
+                        }
+                }
+            )
+
+        let symbol kind =
+            let start = pos
+            pos <- pos + 1
+            addToken kind start
 
         while pos < source.Length do
             let c = source.[pos]
@@ -16,154 +45,35 @@ module Lexer =
             match c with
             | ' '
             | '\t'
-            | '\r'
-            | '\n' -> pos <- pos + 1
-            | '(' ->
-                tokens.Add(
-                    {
-                        Kind = TokenKind.LParen
-                        Value = "("
-                        Span =
-                            {
-                                Line = 0un //span setted to 0 for noow
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
-
+            | '\r' -> pos <- pos + 1
+            | '\n' ->
                 pos <- pos + 1
-            | ')' ->
-                tokens.Add(
-                    {
-                        Kind = TokenKind.RParen
-                        Value = "("
-                        Span =
-                            {
-                                Line = 0un //span setted to 0 for noow
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
-
-                pos <- pos + 1
-            | '{' ->
-                tokens.Add(
-                    {
-                        Kind = TokenKind.LBrace
-                        Value = "("
-                        Span =
-                            {
-                                Line = 0un //span setted to 0 for noow
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
-
-                pos <- pos + 1
-            | '}' ->
-                tokens.Add(
-                    {
-                        Kind = TokenKind.RBrace
-                        Value = "("
-                        Span =
-                            {
-                                Line = 0un //span setted to 0 for noow
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
-
-                pos <- pos + 1
-            | ':' ->
-                tokens.Add(
-                    {
-                        Kind = TokenKind.Colon
-                        Value = "("
-                        Span =
-                            {
-                                Line = 0un //span setted to 0 for noow
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
-
-                pos <- pos + 1
+                line <- line + 1
+                lineStart <- pos
+            | '(' -> symbol TokenKind.LParen
+            | ')' -> symbol TokenKind.RParen
+            | '{' -> symbol TokenKind.LBrace
+            | '}' -> symbol TokenKind.RBrace
+            | ':' -> symbol TokenKind.Colon
             | c when Char.IsDigit c ->
                 let start = pos
 
-                while Char.IsDigit source.[pos] do
+                while pos < source.Length && Char.IsDigit source.[pos] do
                     pos <- pos + 1
 
-                let num = source.Substring(start, pos - start)
-
-                tokens.Add(
-                    {
-                        Kind = TokenKind.IntLiteral
-                        Value = num
-                        Span =
-                            {
-                                Line = 0un
-                                Column = 0un
-                                Offset = 0un
-                                Length = 0un
-                                SourceName = ""
-                            }
-                    }
-                )
+                addToken TokenKind.IntLiteral start
             | c when Char.IsLetter c ->
                 let start = pos
 
-                while Char.IsLetterOrDigit source.[pos] do
+                while pos < source.Length && Char.IsLetterOrDigit source.[pos] do
                     pos <- pos + 1
 
                 let id = source.Substring(start, pos - start)
 
                 if keywords.ContainsKey id then
-                    tokens.Add(
-                        {
-                            Kind = keywords[id]
-                            Value = id
-                            Span =
-                                {
-                                    Line = 0un
-                                    Column = 0un
-                                    Offset = 0un
-                                    Length = 0un
-                                    SourceName = ""
-                                }
-                        }
-                    )
+                    addToken keywords[id] start
                 else
-                    tokens.Add(
-                        {
-                            Kind = TokenKind.Identifiter
-                            Value = id
-                            Span =
-                                {
-                                    Line = 0un
-                                    Column = 0un
-                                    Offset = 0un
-                                    Length = 0un
-                                    SourceName = ""
-                                }
-                        }
-                    )
-
+                    addToken TokenKind.Identifiter start
 
             | _ -> pos <- pos + 1
 

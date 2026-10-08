@@ -11,7 +11,7 @@ module Compiler =
             1
         else
             let source = File.ReadAllText path
-            let tokens = Lexer.Tokenize source
+            let tokens = Lexer.Tokenize path source
 
             if dumpTokens then
                 for token in tokens do
