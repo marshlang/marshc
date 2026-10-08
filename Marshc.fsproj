@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="src/Driver/Options.fs"/>
+    <Compile Include="src/Frontend/Token.fs"/>
     <Compile Include="src/Program.fs" />
   </ItemGroup>
 
