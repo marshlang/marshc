@@ -45,7 +45,7 @@ $(TARGET): $(OBJECTS)
 
 $(OBJ_DIR)/%.o: %.c
 	$(MKDIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(MODE_FLAGS) -MMD -MP -c "$<" -o "$@"
+	$(CC) $(CPPFLAGS) -Iinclude $(CFLAGS) $(MODE_FLAGS) -MMD -MP -c "$<" -o "$@"
 
 clean:
 	$(CLEAN)
