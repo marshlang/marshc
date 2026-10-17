@@ -1,7 +1,6 @@
 PROGRAM := marshc
 BUILD ?= debug
 
-# Add directories here when the compiler grows.
 SOURCE_DIRS := src
 SOURCES := $(foreach dir,$(SOURCE_DIRS),$(wildcard $(dir)/*.c))
 
