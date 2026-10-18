@@ -3,6 +3,7 @@
 #include <string.h>
 #include "marsh/driver.h"
 #include "marsh/lexer.h"
+#include "marsh/parser.h"
 
 #define VERSION "0.1"
 
@@ -67,14 +68,17 @@ int driver_lex_file(const char *path) {
     source[length] = '\0';
 
     Lexer lexer = lexer_create(source, (StringView){path, strlen(path)}, length);
-    Token token;
-    do {
-        token = lexer_next(&lexer);
-        printf("%zu:%zu %-16s %.*s\n", token.span.line, token.span.col,
-               token_kind_name(token.kind), (int)token.span.length,
-               source + token.span.offset);
-    } while (token.kind != SPECIAL_EOF);
+    Parser parser;
+    parser_init(&parser, &lexer);
+    AstProgram *program = parser_parse(&parser);
+    if (program == NULL) {
+        fprintf(stderr, "Parse error in %s\n", path);
+        free(source);
+        return 1;
+    }
+    printf("Parsed %zu function(s) from %s\n", program->function_count, path);
 
+    free(program);
     free(source);
     return 0;
 }

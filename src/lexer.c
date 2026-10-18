@@ -32,6 +32,7 @@ static char advance(Lexer* lexer){
 static Token make_token(TokenKind kind, StringView source_name, size_t start, size_t length, size_t line, size_t column){
     return (Token){
         .kind = kind,
+        .value = {0},
         .span = {
             .line = line,
             .col = column,
@@ -109,7 +110,7 @@ Token lexer_next(Lexer *lexer) {
             break;
     }
 
-    return make_token(
+    Token token = make_token(
         kind,
         lexer->source_name,
         start,
@@ -117,4 +118,6 @@ Token lexer_next(Lexer *lexer) {
         line,
         col
     );
+    token.value = (StringView){lexer->source + start, token.span.length};
+    return token;
 }

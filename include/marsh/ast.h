@@ -1,7 +1,8 @@
 #pragma once
-#include "marsh/string_view.h"
+#include <marsh/string_view.h>
 #include <marsh/source_span.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 typedef struct AstExpr AstExpr;
@@ -27,7 +28,7 @@ struct AstExpr{
     SourceSpan span;
 
     union {
-        long long int_value;
+        int64_t int_value;
     } as;
 };
 
