@@ -7,6 +7,7 @@
 #define VERSION "0.1"
 
 int driver_help(){
+    printf("usage: marshc <file.marsh>\n");
     printf("-v, --version   prints compiler version\n");
     return 0;
 }
@@ -31,8 +32,7 @@ static const char *token_kind_name(TokenKind kind) {
     return "UNKNOWN_TOKEN_KIND";
 }
 
-int driver_lex_example(void) {
-    const char *path = "examples/basic.marsh";
+int driver_lex_file(const char *path) {
     FILE *file = fopen(path, "rb");
     if (!file) {
         perror(path);
