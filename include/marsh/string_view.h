@@ -3,11 +3,24 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef struct {
     const char *data;
     size_t length;
 } StringView;
+
+static inline bool string_view_cmp(StringView a, StringView b){
+    if(a.length == b.length && memcmp(a.data, a.data, a.length))
+        return true;
+    return false;
+}
+
+static inline bool string_view_cmp_cstr(StringView a, const char* b){
+    size_t length = strlen(b);
+
+    return a.length == length && memcmp(a.data, b, length);
+}
 
 static inline bool string_view_to_int(StringView view, int64_t *out)
 {
