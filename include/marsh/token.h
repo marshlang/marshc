@@ -1,14 +1,9 @@
 #pragma once
 #include <marsh/string_view.h>
+#include <marsh/source_span.h>
 #include <stddef.h>
-typedef struct{
-    size_t line;
-    size_t col;
-    size_t offset;
-    size_t length;
-    StringView source_name;
-} SourceSpan;
 
+ 
 typedef enum{
     //keywords
     KEYWORD_FUN,
