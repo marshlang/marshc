@@ -10,6 +10,15 @@ typedef struct AstStmt AstStmt;
 typedef struct AstFunction AstFunction;
 typedef struct AstDecl AstDecl;
 
+typedef enum{
+    AST_TYPE_UNIT,
+    AST_TYPE_BOOL,
+    AST_TYPE_INT,
+    AST_TYPE_FLOAT,
+    AST_TYPE_STRING, //[]byte
+    AST_TYPE_NAMED
+} AstTypeKind;
+
 typedef enum {
     AST_STMT_EXPR,
     AST_STMT_BLOCK
@@ -57,6 +66,7 @@ struct AstStmt {
 struct AstFunction {
     StringView name;
     AstStmt *body;
+    AstTypeKind return_type;
     AstFunction* next;
 };
 
@@ -76,3 +86,18 @@ typedef struct{
     AstDecl* last;
     size_t function_count;
 } AstProgram;
+
+typedef struct AstType{
+    AstTypeKind kind;
+    union{
+       struct{
+           unsigned bits;
+           bool is_signed;
+       } integer;
+
+       struct{
+           unsigned bits;
+       } floating;
+       StringView named;
+    } as;
+} AstType;

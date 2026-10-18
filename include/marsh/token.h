@@ -12,6 +12,7 @@ typedef enum{
     SYMBOL_RPAREN,
     SYMBOL_LBRACE,
     SYMBOL_RBRACE,
+    SYMBOL_COLON,
     //literals
     LITERAL_INT,
     LITERAL_ID,

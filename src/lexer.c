@@ -78,6 +78,7 @@ Token lexer_next(Lexer *lexer) {
         case ')': kind = SYMBOL_RPAREN; break;
         case '{': kind = SYMBOL_LBRACE; break;
         case '}': kind = SYMBOL_RBRACE; break;
+        case ':': kind = SYMBOL_COLON; break;
 
         default:
             if (c >= '0' && c <= '9') {
